@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OMR Auto-Checker · Math 10 Statistics · UPIS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0f1f44;
+  --teal:#1a7a7a;
+  --teal-light:#2aacac;
+  --gold:#c8a84b;
+  --gold-light:#e8c870;
+  --coral:#e05c4b;
+  --green:#1d8a4e;
+  --green-light:#22c55e;
+  --bg:#f0ede8;
+  --card:#ffffff;
+  --text:#1a1a2e;
+  --muted:#7a7a8a;
+  --border:#e2ddd8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.hdr{background:var(--navy);padding:0 32px;display:flex;align-items:stretch;gap:0;min-height:64px}
+.hdr-brand{display:flex;align-items:center;gap:14px;padding:14px 0}
+.hdr-icon{width:40px;height:40px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hdr-title{color:white}
+.hdr-title h1{font-family:'Playfair Display',serif;font-size:1.15rem;line-height:1.2}
+.hdr-title p{font-size:0.72rem;opacity:.65;margin-top:2px}
+.hdr-badge{margin-left:auto;display:flex;align-items:center}
+.badge{background:rgba(200,168,75,.2);border:1px solid var(--gold);color:var(--gold);font-size:.7rem;font-weight:600;padding:4px 10px;border-radius:20px}
+
+.main{max-width:960px;margin:0 auto;padding:24px 16px 48px}
+
+.alert{padding:11px 16px;border-radius:8px;margin-bottom:16px;font-size:.82rem;display:flex;align-items:flex-start;gap:10px}
+.alert-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.alert-info{background:#dbeafe;color:#1e3a8a;border-left:3px solid #3b82f6}
+.alert-warn{background:#fef3c7;color:#78350f;border-left:3px solid #f59e0b}
+.alert-success{background:#d1fae5;color:#064e3b;border-left:3px solid #10b981}
+.alert-error{background:#fee2e2;color:#7f1d1d;border-left:3px solid #ef4444}
+
+.steps{display:flex;align-items:center;gap:0;margin-bottom:24px;background:var(--card);border-radius:12px;padding:4px;border:1px solid var(--border)}
+.step{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;border-radius:9px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:default;transition:all .25s;text-align:center}
+.step.active{background:var(--navy);color:white}
+.step.done{background:var(--teal);color:white}
+.step-num{width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0}
+.step.active .step-num,.step.done .step-num{background:rgba(255,255,255,.2)}
+
+.card{background:var(--card);border-radius:14px;padding:24px;margin-bottom:18px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+.tabs{display:flex;gap:4px;background:#f0ede8;padding:4px;border-radius:9px;margin-bottom:18px}
+.tab{flex:1;padding:8px 12px;text-align:center;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:600;color:var(--muted);transition:all .2s;user-select:none}
+.tab.active{background:var(--card);color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.tab:hover:not(.active){color:var(--navy)}
+
+.drop-zone{border:2px dashed #c8c4be;border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;background:#fafaf8}
+.drop-zone:hover,.drop-zone.over{border-color:var(--teal);background:#f0f9f9}
+.drop-zone .dz-icon{font-size:3.5rem;margin-bottom:12px;display:block}
+.drop-zone .dz-title{font-weight:600;margin-bottom:4px;font-size:.95rem}
+.drop-zone .dz-sub{font-size:.78rem;color:var(--muted)}
+
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:.84rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:'Sora',sans-serif;white-space:nowrap}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--teal);color:white}
+.btn-primary:hover:not(:disabled){background:#156060}
+.btn-navy{background:var(--navy);color:white}
+.btn-navy:hover:not(:disabled){background:#0a1630}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-gold:hover:not(:disabled){background:var(--gold-light)}
+.btn-outline{background:transparent;border:1.5px solid var(--navy);color:var(--navy)}
+.btn-outline:hover:not(:disabled){background:var(--navy);color:white}
+.btn-sm{padding:6px 12px;font-size:.78rem}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+#previewCanvas{max-width:100%;border-radius:10px;display:block;margin:0 auto;border:1px solid var(--border)}
+#debugCanvas{max-width:100%;border-radius:10px;display:block;margin:12px auto 0;border:1px solid var(--border)}
+
+#cameraFeed{width:100%;max-width:560px;border-radius:10px;display:block;margin:0 auto;background:#111;aspect-ratio:4/3;object-fit:cover}
+
+.score-hero{background:linear-gradient(135deg, var(--navy) 0%, #1a3a6a 50%, var(--teal) 100%);border-radius:14px;padding:32px 24px;text-align:center;color:white;margin-bottom:18px;position:relative;overflow:hidden}
+.score-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.score-big{font-family:'Playfair Display',serif;font-size:3.8rem;line-height:1;font-weight:700;position:relative}
+.score-pct{font-size:1.5rem;opacity:.8;margin-top:6px;position:relative}
+.score-sub{font-size:.82rem;opacity:.6;margin-top:4px;position:relative}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:var(--card);border-radius:10px;padding:14px;text-align:center;border:1px solid var(--border)}
+.stat-val{font-family:'Playfair Display',serif;font-size:2rem;line-height:1}
+.stat-label{font-size:.7rem;color:var(--muted);margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.stat-correct .stat-val{color:var(--green)}
+.stat-wrong .stat-val{color:var(--coral)}
+.stat-blank .stat-val{color:var(--muted)}
+.stat-pct .stat-val{color:var(--navy)}
+
+.results-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rtable{width:100%;border-collapse:collapse;font-size:.8rem}
+.rtable th{background:var(--navy);color:white;padding:7px 10px;text-align:center;font-weight:600;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
+.rtable th:first-child{border-radius:6px 0 0 0}
+.rtable th:last-child{border-radius:0 6px 0 0}
+.rtable td{padding:5px 10px;text-align:center;border-bottom:1px solid #f3f0ec}
+.rtable tr:last-child td{border-bottom:none}
+.rtable tr:hover td{background:#fafaf8}
+.rtable .r-num{font-weight:600;color:var(--muted);font-size:.72rem}
+.rtable .r-det{font-weight:700}
+.r-correct{color:var(--green);font-weight:700}
+.r-wrong{color:var(--coral);font-weight:700}
+.r-blank{color:var(--muted)}
+
+.ak-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.ak-cell{background:var(--navy);color:white;padding:6px 4px;border-radius:5px;text-align:center}
+.ak-n{font-size:.6rem;opacity:.55;display:block;line-height:1}
+.ak-a{font-size:.85rem;font-weight:700;display:block;line-height:1.4}
+
+.mo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.mo-item{display:flex;align-items:center;gap:5px;font-size:.78rem}
+.mo-num{width:24px;text-align:right;font-weight:700;color:var(--muted);flex-shrink:0}
+.mo-sel{flex:1;padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:.78rem;font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);cursor:pointer}
+.mo-sel:focus{outline:none;border-color:var(--teal)}
+
+.settings-panel{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.setting-row{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid #f3f0ec;gap:12px}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:.8rem;flex:1}
+.setting-row input[type=range]{width:130px;accent-color:var(--teal)}
+.setting-val{font-size:.8rem;font-weight:700;width:36px;text-align:right;color:var(--teal)}
+
+.loading-bar{display:none;text-align:center;padding:32px}
+.spinner{width:44px;height:44px;border:4px solid #e2ddd8;border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{font-size:.85rem;color:var(--muted);font-weight:500}
+
+.debug-header{font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+
+details summary{cursor:pointer;font-weight:600;font-size:.85rem;padding:10px 0;color:var(--navy);user-select:none;list-style:none;display:flex;align-items:center;gap:6px}
+details summary::before{content:'▶';font-size:.65rem;transition:transform .2s;display:inline-block}
+details[open] summary::before{transform:rotate(90deg)}
+
+.hidden{display:none!important}
+
+/* Legend for debug view */
+.debug-legend{display:flex;gap:16px;margin-top:8px;font-size:.75rem;justify-content:center;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+
+@media print{
+  .hdr,.steps,.card:has(#dropZone),.btn-group,.no-print{display:none!important}
+  .card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
+  body{background:white}
+}
+@media(max-width:620px){
+  .results-cols{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .ak-grid{grid-template-columns:repeat(5,1fr)}
+  .mo-grid{grid-template-columns:repeat(4,1fr)}
+  .hdr{padding:0 16px}
+  .main{padding:16px 12px 40px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-icon">📊</div>
+    <div class="hdr-title">
+      <h1>OMR Auto-Checker</h1>
+      <p>Math 10 Statistics · End-Sem · UPIS 2025-2026</p>
+    </div>
+  </div>
+  <div class="hdr-badge"><span class="badge">40 items · ABCD</span></div>
+</div>
+
+<div class="main">
+
+  <div id="cvStatus" class="alert alert-info">
+    <span class="alert-icon">⏳</span>
+    <span>Loading OpenCV.js… please wait before scanning.</span>
+  </div>
+
+  <div class="steps">
+    <div class="step active" id="step1"><span class="step-num">1</span> Capture Image</div>
+    <div class="step" id="step2"><span class="step-num">2</span> Process OMR</div>
+    <div class="step" id="step3"><span class="step-num">3</span> View Results</div>
+  </div>
+
+  <!-- CAPTURE -->
+  <div id="sCapture" class="card">
+    <h2>📷 Scan Answer Sheet</h2>
+    <div class="alert alert-info">
+      <span class="alert-icon">💡</span>
+      <div>
+        <strong>Tips for accurate detection:</strong> The 4 black corner squares are used for automatic alignment. 
+        Ensure <em>all 4 corners are visible</em> with good contrast. Place on a <em>dark, flat surface</em> with even lighting and no glare.
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" id="tabUpload" onclick="switchTab('upload')">📁 Upload / Drag & Drop</div>
+      <div class="tab" id="tabCamera" onclick="switchTab('camera')">📷 Live Camera</div>
+    </div>
+    <div id="panelUpload">
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <span class="dz-icon">📄</span>
+        <div class="dz-title">Click to upload or drag & drop an image</div>
+        <div class="dz-sub">PNG · JPG · JPEG · WEBP · BMP &nbsp;·&nbsp; Works best at 1000px+ resolution</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)"/>
+    </div>
+    <div id="panelCamera" class="hidden">
+      <video id="cameraFeed" autoplay playsinline muted></video>
+      <div style="margin-top:12px" class="btn-group">
+        <button class="btn btn-navy" id="btnStartCam" onclick="startCamera()">▶ Start Camera</button>
+        <button class="btn btn-primary hidden" id="btnCapture" onclick="captureFrame()">📸 Capture</button>
+        <button class="btn btn-outline hidden" id="btnStopCam" onclick="stopCamera()">⏹ Stop</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCESS -->
+  <div id="sProcess" class="card hidden">
+    <h2>🔍 Preview &amp; Process</h2>
+    <div id="alertProcess" class="alert alert-info">
+      <span class="alert-icon">✅</span>
+      <span>Image loaded! Click <strong>Process OMR</strong> to automatically detect answers.</span>
+    </div>
+    <div style="margin-bottom:16px">
+      <canvas id="previewCanvas"></canvas>
+    </div>
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-primary" id="btnProcess" onclick="runOMR()">⚡ Process OMR</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('settingsPanel').classList.toggle('hidden')">⚙️ Settings</button>
+      <button class="btn btn-outline btn-sm" onclick="resetAll()">🔄 New Scan</button>
+    </div>
+    <div id="settingsPanel" class="settings-panel hidden">
+      <p style="font-size:.82rem;font-weight:600;margin-bottom:10px;color:var(--navy)">⚙️ Detection Parameters</p>
+      <div class="setting-row">
+        <span class="setting-label">Min Bubble Radius (px)</span>
+        <input type="range" id="sMinR" min="3" max="30" value="6" oninput="document.getElementById('vMinR').textContent=this.value">
+        <span class="setting-val" id="vMinR">6</span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Max Bubble Radius (px)</span>
+        <input type="range" id="sMaxR" min="10" max="60" value="22" oninput="document.getElementById('vMaxR').textContent=this.value">
+        <span class="setting-val" id="vMaxR">22</span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Fill Sensitivity (%)</span>
+        <input type="range" id="sFill" min="10" max="70" value="35" oninput="document.getElementById('vFill').textContent=this.value+'%'">
+        <span class="setting-val" id="vFill">35%</span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Hough Accumulator Threshold</span>
+        <input type="range" id="sParam2" min="8" max="30" value="14" oninput="document.getElementById('vParam2').textContent=this.value">
+        <span class="setting-val" id="vParam2">14</span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Fiducial Marker Min Area (px²)</span>
+        <input type="range" id="sFidMin" min="100" max="3000" value="400" step="50" oninput="document.getElementById('vFidMin').textContent=this.value">
+        <span class="setting-val" id="vFidMin">400</span>
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px">
+        <span class="alert-icon">⚠️</span>
+        <span>If detection is poor, try lowering Fill Sensitivity or Accumulator Threshold. Adjust Fiducial Marker Min Area if corner squares aren't being found.</span>
+      </div>
+    </div>
+    <div class="loading-bar" id="loadingDiv">
+      <div class="spinner"></div>
+      <div class="loading-msg" id="loadMsg">Analysing image…</div>
+    </div>
+    <div id="debugSection" class="hidden" style="margin-top:16px">
+      <div class="debug-header">🔬 Detected Bubbles (overlaid on aligned sheet)</div>
+      <canvas id="debugCanvas"></canvas>
+      <div class="debug-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Correct answer (filled)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Wrong answer (filled)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> Unanswered / blank</div>
+        <div class="legend-item"><div class="legend-dot" style="border:2px solid #94a3b8;background:transparent"></div> Empty bubble</div>
+      </div>
+      <p id="bubbleCount" style="font-size:.75rem;color:var(--muted);margin-top:6px;text-align:center"></p>
+      <p id="fiducialStatus" style="font-size:.75rem;color:var(--muted);margin-top:2px;text-align:center"></p>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="sResults" class="card hidden">
+    <h2>📊 Results</h2>
+    <div class="score-hero">
+      <div class="score-big" id="heroScore">–/40</div>
+      <div class="score-pct" id="heroPct">–%</div>
+      <div class="score-sub" id="heroSub">Correct · Wrong · Blank</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card stat-correct"><div class="stat-val" id="sCorrect">–</div><div class="stat-label">Correct</div></div>
+      <div class="stat-card stat-wrong"><div class="stat-val" id="sWrong">–</div><div class="stat-label">Wrong</div></div>
+      <div class="stat-card stat-blank"><div class="stat-val" id="sBlank">–</div><div class="stat-label">Unanswered</div></div>
+      <div class="stat-card stat-pct"><div class="stat-val" id="sPct">–</div><div class="stat-label">Percentage</div></div>
+    </div>
+    <div id="manualWarn" class="alert alert-warn hidden">
+      <span class="alert-icon">⚠️</span>
+      <span>Some items could not be confidently detected (marked as –). Please review and correct via <strong>Manual Override</strong> below.</span>
+    </div>
+    <div class="results-cols">
+      <div><table class="rtable"><thead><tr><th>#</th><th>Detected</th><th>Key</th><th>Result</th></tr></thead><tbody id="rBody1"></tbody></table></div>
+      <div><table class="rtable"><thead><tr><th>#</th><th>Detected</th><th>Key</th><th>Result</th></tr></thead><tbody id="rBody2"></tbody></table></div>
+    </div>
+    <div style="margin-top:20px">
+      <details id="moDetails">
+        <summary>✏️ Manual Override — click to expand and correct any item</summary>
+        <div id="moGrid" class="mo-grid" style="margin-top:14px"></div>
+        <div class="btn-group" style="margin-top:12px">
+          <button class="btn btn-primary btn-sm" onclick="applyManual()">✅ Apply Corrections &amp; Rescore</button>
+          <button class="btn btn-outline btn-sm" onclick="clearManual()">Clear All</button>
+        </div>
+      </details>
+    </div>
+    <div class="btn-group no-print" style="margin-top:20px">
+      <button class="btn btn-navy" onclick="window.print()">🖨️ Print Results</button>
+      <button class="btn btn-gold" onclick="exportCSV()">📥 Export CSV</button>
+      <button class="btn btn-outline" onclick="resetAll()">🔄 New Scan</button>
+    </div>
+  </div>
+
+  <!-- ANSWER KEY -->
+  <div class="card">
+    <h2>🗝️ Answer Key Reference</h2>
+    <div class="ak-grid" id="akGrid"></div>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:10px">
+      ⚠️ Note: Item 16 = <strong>C</strong> (the tabular key in the PDF shows D, but the distribution table and correct logic confirm C).
+    </p>
+  </div>
+
+</div>
+
+<canvas id="inputCanvas" style="display:none"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/opencv.js/4.8.0/opencv.js" crossorigin="anonymous" async></script>
+
+<script>
+// ═══════════════════════════════════════
+//  ANSWER KEY
+// ═══════════════════════════════════════
+const AK = {
+  1:'B',  2:'C',  3:'B',  4:'C',  5:'D',
+  6:'B',  7:'A',  8:'C',  9:'C', 10:'D',
+ 11:'B', 12:'B', 13:'B', 14:'A', 15:'A',
+ 16:'C', 17:'C', 18:'C', 19:'B', 20:'C',
+ 21:'A', 22:'A', 23:'D', 24:'B', 25:'C',
+ 26:'D', 27:'A', 28:'D', 29:'C', 30:'C',
+ 31:'B', 32:'B', 33:'B', 34:'D', 35:'A',
+ 36:'D', 37:'C', 38:'C', 39:'A', 40:'D'
+};
+const CHOICES = ['A','B','C','D'];
+
+let cvReady = false;
+let stream = null;
+let detectedAnswers = {};
+// Store bubble data for re-drawing after scoring
+let lastBubbles = [];
+let lastWarpedDataUrl = null;
+let lastFillT = 0.35;
+
+// ═══════════════════════════════════════
+//  OPENCV INIT
+// ═══════════════════════════════════════
+const cvPoll = setInterval(()=>{
+  try {
+    if(typeof cv !== 'undefined' && cv.Mat && cv.imread){
+      clearInterval(cvPoll);
+      cvReady = true;
+      const el = document.getElementById('cvStatus');
+      el.className = 'alert alert-success';
+      el.innerHTML = '<span class="alert-icon">✅</span><span>OpenCV.js ready — you can now process scanned answer sheets!</span>';
+      setTimeout(()=>el.style.display='none', 3500);
+    }
+  } catch(e){}
+}, 600);
+
+// ═══════════════════════════════════════
+//  ANSWER KEY DISPLAY
+// ═══════════════════════════════════════
+(function renderAK(){
+  const g = document.getElementById('akGrid');
+  for(let i=1;i<=40;i++){
+    g.innerHTML += `<div class="ak-cell"><span class="ak-n">${i}</span><span class="ak-a">${AK[i]}</span></div>`;
+  }
+})();
+
+// ═══════════════════════════════════════
+//  TABS & FILE HANDLING
+// ═══════════════════════════════════════
+function switchTab(t){
+  document.getElementById('panelUpload').classList.toggle('hidden', t!=='upload');
+  document.getElementById('panelCamera').classList.toggle('hidden', t!=='camera');
+  document.getElementById('tabUpload').classList.toggle('active', t==='upload');
+  document.getElementById('tabCamera').classList.toggle('active', t==='camera');
+  if(t!=='camera') stopCamera();
+}
+
+function handleFile(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  loadImageFile(f);
+}
+
+function loadImageFile(f){
+  const r = new FileReader();
+  r.onload = ev => {
+    const img = new Image();
+    img.onload = () => prepareImage(img);
+    img.src = ev.target.result;
+  };
+  r.readAsDataURL(f);
+}
+
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('over')});
+dz.addEventListener('dragleave', ()=>dz.classList.remove('over'));
+dz.addEventListener('drop', e=>{
+  e.preventDefault(); dz.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if(f && f.type.startsWith('image/')) loadImageFile(f);
+});
+
+// ═══════════════════════════════════════
+//  CAMERA
+// ═══════════════════════════════════════
+async function startCamera(){
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:'environment', width:{ideal:1920}, height:{ideal:1080} }
+    });
+    document.getElementById('cameraFeed').srcObject = stream;
+    toggle('btnStartCam',true);
+    toggle('btnCapture',false);
+    toggle('btnStopCam',false);
+  } catch(err){
+    showAlert('alertProcess','error','Camera access denied or unavailable. Please use file upload instead.');
+  }
+}
+
+function captureFrame(){
+  const v = document.getElementById('cameraFeed');
+  const c = document.createElement('canvas');
+  c.width = v.videoWidth; c.height = v.videoHeight;
+  c.getContext('2d').drawImage(v, 0, 0);
+  const img = new Image();
+  img.onload = () => prepareImage(img);
+  img.src = c.toDataURL('image/jpeg', 0.95);
+  stopCamera();
+}
+
+function stopCamera(){
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  document.getElementById('cameraFeed').srcObject = null;
+  toggle('btnStartCam',false);
+  toggle('btnCapture',true);
+  toggle('btnStopCam',true);
+}
+
+// ═══════════════════════════════════════
+//  PREPARE IMAGE
+// ═══════════════════════════════════════
+function prepareImage(img){
+  const ic = document.getElementById('inputCanvas');
+  ic.width = img.width; ic.height = img.height;
+  ic.getContext('2d').drawImage(img, 0, 0);
+
+  const pc = document.getElementById('previewCanvas');
+  const scale = Math.min(700/img.width, 500/img.height, 1);
+  pc.width = img.width*scale; pc.height = img.height*scale;
+  pc.getContext('2d').drawImage(img, 0, 0, pc.width, pc.height);
+
+  document.getElementById('sCapture').classList.add('hidden');
+  document.getElementById('sProcess').classList.remove('hidden');
+  document.getElementById('sResults').classList.add('hidden');
+  document.getElementById('debugSection').classList.add('hidden');
+  setStep(2);
+}
+
+// ═══════════════════════════════════════
+//  FIDUCIAL MARKER DETECTION
+//  Finds 4 large black squares in corners
+// ═══════════════════════════════════════
+function findFiducialMarkers(gray, minArea){
+  // Threshold to find dark blobs
+  const bin = new cv.Mat();
+  cv.threshold(gray, bin, 80, 255, cv.THRESH_BINARY_INV);
+
+  // Morphological close to fill small gaps
+  const kern = cv.Mat.ones(5,5,cv.CV_8U);
+  cv.morphologyEx(bin, bin, cv.MORPH_CLOSE, kern);
+
+  const cnts = new cv.MatVector(), hier = new cv.Mat();
+  cv.findContours(bin, cnts, hier, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+  const candidates = [];
+  for(let i=0;i<cnts.size();i++){
+    const c = cnts.get(i);
+    const area = cv.contourArea(c);
+    if(area < minArea || area > gray.rows*gray.cols*0.05) { c.delete(); continue; }
+
+    const peri = cv.arcLength(c, true);
+    const approx = new cv.Mat();
+    cv.approxPolyDP(c, approx, 0.05*peri, true);
+
+    // Looking for squares (4-sided, close to square aspect ratio)
+    if(approx.rows >= 4 && approx.rows <= 6){
+      const rect = cv.boundingRect(c);
+      const aspect = rect.width / rect.height;
+      if(aspect > 0.5 && aspect < 2.0){
+        const M = cv.moments(c);
+        if(M.m00 > 0){
+          candidates.push({
+            x: M.m10/M.m00,
+            y: M.m01/M.m00,
+            area,
+            w: rect.width,
+            h: rect.height
+          });
+        }
+      }
+    }
+    approx.delete();
+    c.delete();
+  }
+
+  cnts.delete(); hier.delete(); kern.delete(); bin.delete();
+
+  // Sort by area descending, keep top 4
+  candidates.sort((a,b)=>b.area-a.area);
+  return candidates.slice(0,4);
+}
+
+// ═══════════════════════════════════════
+//  ORDER POINTS: TL, TR, BR, BL
+// ═══════════════════════════════════════
+function orderPts(pts){
+  const cx = pts.reduce((s,p)=>s+p.x,0)/pts.length;
+  const cy = pts.reduce((s,p)=>s+p.y,0)/pts.length;
+  const tl = pts.filter(p=>p.x<=cx && p.y<=cy).sort((a,b)=>a.x-b.x)[0];
+  const tr = pts.filter(p=>p.x>cx && p.y<=cy).sort((a,b)=>b.x-a.x)[0];
+  const br = pts.filter(p=>p.x>cx && p.y>cy).sort((a,b)=>b.x-a.x)[0];
+  const bl = pts.filter(p=>p.x<=cx && p.y>cy).sort((a,b)=>a.x-b.x)[0];
+  // Fallback if a quadrant is missing
+  if(!tl||!tr||!br||!bl){
+    // Use center-of-mass-based quadrant approach
+    const bySum = [...pts].sort((a,b)=>(a.x+a.y)-(b.x+b.y));
+    const byDiff = [...pts].sort((a,b)=>(a.y-a.x)-(b.y-b.x));
+    return [
+      bySum[0],                         // TL: min x+y
+      byDiff[0],                        // TR: min y-x
+      bySum[bySum.length-1],            // BR: max x+y
+      byDiff[byDiff.length-1]           // BL: max y-x
+    ];
+  }
+  return [tl, tr, br, bl];
+}
+
+// ═══════════════════════════════════════
+//  MAIN OMR PIPELINE
+// ═══════════════════════════════════════
+async function runOMR(){
+  if(!cvReady){
+    showAlert('alertProcess','warn','OpenCV.js is still loading. Please wait and try again.');
+    return;
+  }
+
+  document.getElementById('loadingDiv').style.display = 'block';
+  document.getElementById('alertProcess').style.display = 'none';
+  document.getElementById('btnProcess').disabled = true;
+  setLoadMsg('Preprocessing image…');
+  await sleep(80);
+
+  try {
+    const result = omrPipeline();
+    detectedAnswers = result.answers;
+    lastBubbles = result.bubbles;
+    lastFillT = result.fillT;
+    setLoadMsg('Rendering results…');
+    await sleep(50);
+    showResults(result);
+    // Redraw debug with colour coding now that we have results
+    redrawDebugWithScoring(result.answers);
+    showAlert('alertProcess','success',`✅ Detection complete! Found ${result.bubbleCount} bubble candidates. ${result.fiducialFound?'4 corner markers detected — sheet aligned.':'No corner markers found — used full-image fallback.'} Review results below.`);
+    document.getElementById('alertProcess').style.display = 'flex';
+  } catch(err){
+    console.error(err);
+    showAlert('alertProcess','error','❌ Processing failed: ' + err.message + '. Try adjusting Settings or use Manual Override.');
+    document.getElementById('alertProcess').style.display = 'flex';
+  } finally {
+    document.getElementById('loadingDiv').style.display = 'none';
+    document.getElementById('btnProcess').disabled = false;
+  }
+}
+
+function omrPipeline(){
+  const minR    = parseInt(document.getElementById('sMinR').value);
+  const maxR    = parseInt(document.getElementById('sMaxR').value);
+  const fillT   = parseInt(document.getElementById('sFill').value)/100;
+  const p2      = parseInt(document.getElementById('sParam2').value);
+  const fidMin  = parseInt(document.getElementById('sFidMin').value);
+
+  const src = cv.imread('inputCanvas');
+  const h0 = src.rows, w0 = src.cols;
+
+  const gray = new cv.Mat();
+  cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+
+  // ── 1. Try fiducial marker detection ──
+  setLoadMsg('Detecting corner markers…');
+  const markers = findFiducialMarkers(gray, fidMin);
+
+  let warped;
+  let fiducialFound = false;
+  const W=900, H=1200;
+
+  if(markers.length >= 4){
+    fiducialFound = true;
+    const ordered = orderPts(markers);
+    // Add offset to exclude the markers themselves (use inner content area)
+    const avgW = markers.reduce((s,m)=>s+m.w,0)/markers.length;
+    const avgH = markers.reduce((s,m)=>s+m.h,0)/markers.length;
+    const pad = Math.max(avgW, avgH) * 0.6;
+
+    const src4 = cv.matFromArray(4,1,cv.CV_32FC2,[
+      ordered[0].x+pad, ordered[0].y+pad,
+      ordered[1].x-pad, ordered[1].y+pad,
+      ordered[2].x-pad, ordered[2].y-pad,
+      ordered[3].x+pad, ordered[3].y-pad
+    ]);
+    const dst4 = cv.matFromArray(4,1,cv.CV_32FC2,[0,0, W,0, W,H, 0,H]);
+    const M = cv.getPerspectiveTransform(src4, dst4);
+    warped = new cv.Mat();
+    cv.warpPerspective(src, warped, M, new cv.Size(W,H));
+    M.delete(); src4.delete(); dst4.delete();
+
+    document.getElementById('fiducialStatus').textContent =
+      `✅ 4 fiducial markers detected — perspective corrected using corner squares`;
+  } else {
+    // Fallback: find largest quad via edge detection
+    setLoadMsg('No corner markers — trying edge detection…');
+    const blr = new cv.Mat(), edges = new cv.Mat(), kern2 = cv.Mat.ones(3,3,cv.CV_8U);
+    cv.GaussianBlur(gray, blr, new cv.Size(5,5), 0);
+    cv.Canny(blr, edges, 50, 150);
+    cv.dilate(edges, edges, kern2);
+
+    const cnts2 = new cv.MatVector(), hier2 = new cv.Mat();
+    cv.findContours(edges, cnts2, hier2, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+    let largestArea=0, sheetPts=null;
+    for(let i=0;i<cnts2.size();i++){
+      const c = cnts2.get(i);
+      const area = cv.contourArea(c);
+      if(area < w0*h0*0.05) { c.delete(); continue; }
+      const peri = cv.arcLength(c, true);
+      const approx = new cv.Mat();
+      cv.approxPolyDP(c, approx, 0.02*peri, true);
+      if(approx.rows===4 && area>largestArea){
+        largestArea=area;
+        if(sheetPts) sheetPts.delete();
+        sheetPts = approx.clone();
+      }
+      approx.delete(); c.delete();
+    }
+    cnts2.delete(); hier2.delete(); blr.delete(); edges.delete(); kern2.delete();
+
+    if(sheetPts){
+      const raw = [];
+      for(let i=0;i<4;i++) raw.push({x:sheetPts.data32S[i*2], y:sheetPts.data32S[i*2+1]});
+      sheetPts.delete();
+      const ord = orderPts(raw);
+      const sp = cv.matFromArray(4,1,cv.CV_32FC2,[ord[0].x,ord[0].y, ord[1].x,ord[1].y, ord[2].x,ord[2].y, ord[3].x,ord[3].y]);
+      const dp = cv.matFromArray(4,1,cv.CV_32FC2,[0,0, W,0, W,H, 0,H]);
+      const M = cv.getPerspectiveTransform(sp, dp);
+      warped = new cv.Mat();
+      cv.warpPerspective(src, warped, M, new cv.Size(W,H));
+      M.delete(); sp.delete(); dp.delete();
+    } else {
+      warped = new cv.Mat();
+      cv.resize(src, warped, new cv.Size(W,H));
+    }
+
+    document.getElementById('fiducialStatus').textContent =
+      markers.length > 0
+        ? `⚠️ Only ${markers.length}/4 corner markers found — using partial alignment`
+        : `⚠️ No corner markers detected — using edge-based or full-image alignment`;
+  }
+
+  // ── 2. Process warped image ──
+  const wg = new cv.Mat();
+  cv.cvtColor(warped, wg, cv.COLOR_RGBA2GRAY);
+  const wb = new cv.Mat();
+  cv.GaussianBlur(wg, wb, new cv.Size(5,5), 0);
+  const wt = new cv.Mat();
+  cv.threshold(wb, wt, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU);
+
+  // ── 3. Detect bubbles via HoughCircles ──
+  setLoadMsg('Detecting bubbles…');
+  const circles = new cv.Mat();
+  cv.HoughCircles(wg, circles, cv.HOUGH_GRADIENT, 1, minR*2.5, 70, p2, minR, maxR);
+
+  let bubbles = [];
+  if(circles.cols > 0){
+    for(let i=0;i<circles.cols;i++){
+      const x = circles.data32F[i*3];
+      const y = circles.data32F[i*3+1];
+      const r = circles.data32F[i*3+2];
+      if(x<0||y<0||x>W||y>H) continue;
+      const fill = circFillRatio(wt, x, y, r);
+      bubbles.push({x,y,r,fill});
+    }
+  }
+  circles.delete();
+
+  // Fallback: contour-based if not enough bubbles found
+  if(bubbles.length < 60){
+    const fb = contourBubbles(wt);
+    if(fb.length > bubbles.length) bubbles = fb;
+  }
+
+  // ── 4. Store warped image for redraw ──
+  const tmpC = document.createElement('canvas');
+  tmpC.width=warped.cols; tmpC.height=warped.rows;
+  cv.imshow(tmpC, warped);
+  lastWarpedDataUrl = tmpC.toDataURL();
+
+  // ── 5. Initial debug draw (before scoring colours) ──
+  drawDebugInitial(warped, bubbles, fillT);
+
+  // ── 6. Extract answers ──
+  setLoadMsg('Mapping answers…');
+  const answers = extractAnswers(bubbles, W, H, fillT);
+
+  src.delete(); gray.delete(); warped.delete(); wg.delete(); wb.delete(); wt.delete();
+
+  return { answers, bubbles, bubbleCount: bubbles.length, fiducialFound, fillT, W, H };
+}
+
+// ═══════════════════════════════════════
+//  FILL RATIO
+// ═══════════════════════════════════════
+function circFillRatio(thresh, cx, cy, r){
+  const x0=Math.max(0,Math.floor(cx-r)), y0=Math.max(0,Math.floor(cy-r));
+  const x1=Math.min(thresh.cols-1,Math.ceil(cx+r)), y1=Math.min(thresh.rows-1,Math.ceil(cy+r));
+  let dark=0, total=0;
+  for(let y=y0;y<=y1;y++){
+    for(let x=x0;x<=x1;x++){
+      if((x-cx)**2+(y-cy)**2<=r*r){
+        total++;
+        if(thresh.ucharPtr(y,x)[0]>0) dark++;
+      }
+    }
+  }
+  return total>0 ? dark/total : 0;
+}
+
+// ═══════════════════════════════════════
+//  CONTOUR BUBBLE FALLBACK
+// ═══════════════════════════════════════
+function contourBubbles(thresh){
+  const cnts = new cv.MatVector(), hier = new cv.Mat();
+  cv.findContours(thresh, cnts, hier, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+  const out=[];
+  for(let i=0;i<cnts.size();i++){
+    const c=cnts.get(i);
+    const area=cv.contourArea(c);
+    const peri=cv.arcLength(c,true);
+    if(peri===0||area<30){ c.delete(); continue; }
+    const circ=4*Math.PI*area/(peri*peri);
+    const rect=cv.boundingRect(c);
+    const r=Math.min(rect.width,rect.height)/2;
+    if(circ>0.45 && r>3 && r<55 && area>30){
+      const M=cv.moments(c);
+      if(M.m00===0){ c.delete(); continue; }
+      const x=M.m10/M.m00, y=M.m01/M.m00;
+      const fill=circFillRatio(thresh,x,y,r);
+      out.push({x,y,r,fill});
+    }
+    c.delete();
+  }
+  cnts.delete(); hier.delete();
+  return out;
+}
+
+// ═══════════════════════════════════════
+//  EXTRACT ANSWERS
+// ═══════════════════════════════════════
+function extractAnswers(bubbles, W, H, fillT){
+  if(!bubbles.length) return {};
+
+  // Cluster rows by Y proximity
+  const sorted = [...bubbles].sort((a,b)=>a.y-b.y);
+  const rows=[];
+  let cur=[sorted[0]];
+  for(let i=1;i<sorted.length;i++){
+    if(Math.abs(sorted[i].y - cur[0].y) < 20) cur.push(sorted[i]);
+    else { if(cur.length>=2) rows.push(cur); cur=[sorted[i]]; }
+  }
+  if(cur.length>=2) rows.push(cur);
+
+  rows.forEach(r=>r.sort((a,b)=>a.x-b.x));
+
+  // Keep only rows with exactly 4 bubbles
+  const quadRows = rows.filter(r=>r.length===4);
+
+  const mid = W/2;
+  const lRows = quadRows.filter(r=>r[3].x < mid-10).sort((a,b)=>a[0].y-b[0].y);
+  const rRows = quadRows.filter(r=>r[0].x > mid-10).sort((a,b)=>a[0].y-b[0].y);
+
+  const answers={};
+
+  function pickAnswer(row){
+    let maxFill=0, sel=-1;
+    row.forEach((b,i)=>{ if(b.fill>maxFill){maxFill=b.fill;sel=i;} });
+    return (maxFill>=fillT && sel>=0) ? CHOICES[sel] : null;
+  }
+
+  if(lRows.length>=5 && rRows.length>=5){
+    lRows.slice(0,20).forEach((row,idx)=>{ answers[idx+1] = pickAnswer(row); });
+    rRows.slice(0,20).forEach((row,idx)=>{ answers[idx+21] = pickAnswer(row); });
+  } else {
+    // Fallback: all rows sorted top-left to bottom-right
+    const all = quadRows.sort((a,b)=>{
+      const yDiff = a[0].y - b[0].y;
+      if(Math.abs(yDiff)>20) return yDiff;
+      return a[0].x - b[0].x;
+    });
+    all.slice(0,40).forEach((row,idx)=>{ answers[idx+1] = pickAnswer(row); });
+  }
+
+  // Attach answer label to each bubble
+  // Map bubble positions back to their item/choice index
+  quadRows.forEach(row=>{
+    // Find item number for this row
+    let item = null;
+    for(let i=1;i<=40;i++){
+      if(answers[i] !== undefined){
+        // Check if this row matches any assigned row
+        // We'll do this in the redraw phase instead
+      }
+    }
+  });
+
+  return answers;
+}
+
+// ═══════════════════════════════════════
+//  BUILD BUBBLE-TO-ITEM MAPPING
+//  so we can colour-code in debug view
+// ═══════════════════════════════════════
+function buildBubbleMap(bubbles, W, H, fillT){
+  if(!bubbles.length) return [];
+
+  const sorted = [...bubbles].sort((a,b)=>a.y-b.y);
+  const rows=[];
+  let cur=[sorted[0]];
+  for(let i=1;i<sorted.length;i++){
+    if(Math.abs(sorted[i].y - cur[0].y) < 20) cur.push(sorted[i]);
+    else { if(cur.length>=2) rows.push(cur); cur=[sorted[i]]; }
+  }
+  if(cur.length>=2) rows.push(cur);
+  rows.forEach(r=>r.sort((a,b)=>a.x-b.x));
+
+  const quadRows = rows.filter(r=>r.length===4);
+  const mid = W/2;
+  const lRows = quadRows.filter(r=>r[3].x < mid-10).sort((a,b)=>a[0].y-b[0].y);
+  const rRows = quadRows.filter(r=>r[0].x > mid-10).sort((a,b)=>a[0].y-b[0].y);
+
+  const mappedBubbles = [];
+
+  const processRows = (rowSet, startItem) => {
+    rowSet.slice(0,20).forEach((row, rowIdx)=>{
+      const itemNum = startItem + rowIdx;
+      let maxFill=0, maxIdx=-1;
+      row.forEach((b,i)=>{ if(b.fill>maxFill){maxFill=b.fill;maxIdx=i;} });
+      const selected = (maxFill>=fillT && maxIdx>=0) ? CHOICES[maxIdx] : null;
+
+      row.forEach((b,choiceIdx)=>{
+        mappedBubbles.push({
+          ...b,
+          item: itemNum,
+          choice: CHOICES[choiceIdx],
+          isSelected: choiceIdx === maxIdx && maxFill >= fillT,
+          isFilled: b.fill >= fillT
+        });
+      });
+    });
+  };
+
+  if(lRows.length>=5 && rRows.length>=5){
+    processRows(lRows, 1);
+    processRows(rRows, 21);
+  } else {
+    const all = quadRows.sort((a,b)=>{
+      const yDiff = a[0].y - b[0].y;
+      if(Math.abs(yDiff)>20) return yDiff;
+      return a[0].x - b[0].x;
+    });
+    all.slice(0,40).forEach((row, rowIdx)=>{
+      const itemNum = rowIdx+1;
+      let maxFill=0, maxIdx=-1;
+      row.forEach((b,i)=>{ if(b.fill>maxFill){maxFill=b.fill;maxIdx=i;} });
+
+      row.forEach((b,choiceIdx)=>{
+        mappedBubbles.push({
+          ...b,
+          item: itemNum,
+          choice: CHOICES[choiceIdx],
+          isSelected: choiceIdx === maxIdx && maxFill >= lastFillT,
+          isFilled: b.fill >= lastFillT
+        });
+      });
+    });
+  }
+
+  // Unmapped bubbles (not in quadRows)
+  const mappedXY = new Set(mappedBubbles.map(b=>`${b.x.toFixed(1)},${b.y.toFixed(1)}`));
+  bubbles.forEach(b=>{
+    const key = `${b.x.toFixed(1)},${b.y.toFixed(1)}`;
+    if(!mappedXY.has(key)){
+      mappedBubbles.push({...b, item:null, choice:null, isSelected:false, isFilled: b.fill>=fillT});
+    }
+  });
+
+  return mappedBubbles;
+}
+
+// ═══════════════════════════════════════
+//  DEBUG DRAW (initial, before scoring)
+// ═══════════════════════════════════════
+function drawDebugInitial(warped, bubbles, fillT){
+  const dc = document.getElementById('debugCanvas');
+  const scale = Math.min(700/warped.cols, 500/warped.rows, 1);
+  dc.width = warped.cols*scale; dc.height = warped.rows*scale;
+  const ctx = dc.getContext('2d');
+
+  const tmp = document.createElement('canvas');
+  tmp.width=warped.cols; tmp.height=warped.rows;
+  cv.imshow(tmp, warped);
+  ctx.drawImage(tmp, 0, 0, dc.width, dc.height);
+
+  bubbles.forEach(b=>{
+    const filled = b.fill >= fillT;
+    ctx.beginPath();
+    ctx.arc(b.x*scale, b.y*scale, b.r*scale, 0, 2*Math.PI);
+    ctx.strokeStyle = filled ? '#22c55e' : '#94a3b8';
+    ctx.lineWidth = filled ? 2.5 : 1;
+    ctx.stroke();
+    if(filled){
+      ctx.globalAlpha=0.25;
+      ctx.fillStyle='#22c55e';
+      ctx.fill();
+      ctx.globalAlpha=1;
+    }
+  });
+
+  const filled = bubbles.filter(b=>b.fill>=fillT).length;
+  document.getElementById('bubbleCount').textContent =
+    `${bubbles.length} bubbles detected · ${filled} filled (above ${Math.round(fillT*100)}% threshold)`;
+  document.getElementById('debugSection').classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════
+//  REDRAW DEBUG WITH COLOUR CODING
+//  Green = correct  Red = wrong  Amber = blank
+// ═══════════════════════════════════════
+function redrawDebugWithScoring(answers){
+  if(!lastWarpedDataUrl || !lastBubbles.length) return;
+
+  const dc = document.getElementById('debugCanvas');
+  const ctx = dc.getContext('2d');
+
+  const img = new Image();
+  img.onload = ()=>{
+    ctx.clearRect(0,0,dc.width,dc.height);
+    ctx.drawImage(img, 0, 0, dc.width, dc.height);
+
+    const W=900, H=1200;
+    const scale = Math.min(700/W, 500/H, 1);
+
+    // Build mapped bubbles
+    const mapped = buildBubbleMap(lastBubbles, W, H, lastFillT);
+
+    mapped.forEach(b=>{
+      const scx = b.x*scale, scy = b.y*scale, scr = b.r*scale;
+
+      if(b.item !== null && b.isSelected){
+        // This is the selected (filled) bubble for this item
+        const correctChoice = AK[b.item];
+        const isCorrect = b.choice === correctChoice;
+        const color = isCorrect ? '#22c55e' : '#ef4444';
+
+        ctx.beginPath();
+        ctx.arc(scx, scy, scr, 0, 2*Math.PI);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        // Label: show the choice letter
+        ctx.font = `bold ${Math.max(8, scr*0.9)}px Sora, sans-serif`;
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(b.choice, scx, scy);
+
+      } else if(b.item !== null && !b.isSelected && b.isFilled){
+        // Filled but not the max-fill bubble (ambiguous)
+        ctx.beginPath();
+        ctx.arc(scx, scy, scr, 0, 2*Math.PI);
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      } else if(b.item !== null && !b.isSelected){
+        // Answer row bubble but empty
+        ctx.beginPath();
+        ctx.arc(scx, scy, scr, 0, 2*Math.PI);
+        ctx.strokeStyle = 'rgba(148,163,184,0.5)';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      } else {
+        // Unmapped bubble
+        ctx.beginPath();
+        ctx.arc(scx, scy, scr, 0, 2*Math.PI);
+        ctx.strokeStyle = b.isFilled ? '#a78bfa' : 'rgba(148,163,184,0.3)';
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+    });
+
+    // Draw item numbers for mapped rows
+    // Find unique row positions
+    const rowMap = {};
+    mapped.filter(b=>b.item!==null).forEach(b=>{
+      if(!rowMap[b.item]) rowMap[b.item]=[];
+      rowMap[b.item].push(b);
+    });
+    Object.entries(rowMap).forEach(([item, bs])=>{
+      const minX = Math.min(...bs.map(b=>b.x)) * scale;
+      const avgY = bs.reduce((s,b)=>s+b.y,0)/bs.length * scale;
+      const det = answers[parseInt(item)];
+      const isBlank = !det;
+      const isCorrect = det === AK[parseInt(item)];
+      const color = isBlank ? '#f59e0b' : (isCorrect ? '#22c55e' : '#ef4444');
+      ctx.font = `bold 9px Sora, sans-serif`;
+      ctx.fillStyle = color;
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${item}`, minX - 4, avgY);
+    });
+  };
+  img.src = lastWarpedDataUrl;
+}
+
+// ═══════════════════════════════════════
+//  DISPLAY RESULTS
+// ═══════════════════════════════════════
+function showResults(result){
+  const ans = result.answers;
+  let correct=0, wrong=0, blank=0;
+
+  const b1 = document.getElementById('rBody1');
+  const b2 = document.getElementById('rBody2');
+  b1.innerHTML = ''; b2.innerHTML = '';
+
+  for(let i=1;i<=40;i++){
+    const det = ans[i]||null;
+    const key = AK[i];
+    const isC = det===key, isB = !det;
+    if(isB) blank++;
+    else if(isC) correct++;
+    else wrong++;
+
+    const icon = isB ? '–' : (isC ? '✓' : '✗');
+    const cls  = isB ? 'r-blank' : (isC ? 'r-correct' : 'r-wrong');
+    const row = `<tr>
+      <td class="r-num">${i}</td>
+      <td class="r-det">${det||'–'}</td>
+      <td>${key}</td>
+      <td class="${cls}">${icon}</td>
+    </tr>`;
+    if(i<=20) b1.innerHTML+=row;
+    else b2.innerHTML+=row;
+  }
+
+  const pct = (correct/40*100).toFixed(1);
+  document.getElementById('heroScore').textContent = `${correct}/40`;
+  document.getElementById('heroPct').textContent   = `${pct}%`;
+  document.getElementById('heroSub').textContent   = `${correct} correct · ${wrong} wrong · ${blank} unanswered`;
+  document.getElementById('sCorrect').textContent  = correct;
+  document.getElementById('sWrong').textContent    = wrong;
+  document.getElementById('sBlank').textContent    = blank;
+  document.getElementById('sPct').textContent      = pct+'%';
+
+  buildManualOverride(ans);
+
+  document.getElementById('manualWarn').classList.toggle('hidden', blank===0 && result.bubbleCount>=80);
+  document.getElementById('sResults').classList.remove('hidden');
+  document.getElementById('sResults').scrollIntoView({behavior:'smooth'});
+  setStep(3);
+}
+
+// ═══════════════════════════════════════
+//  MANUAL OVERRIDE
+// ═══════════════════════════════════════
+function buildManualOverride(ans){
+  const g = document.getElementById('moGrid');
+  g.innerHTML='';
+  for(let i=1;i<=40;i++){
+    const det = ans[i]||'';
+    const opts = CHOICES.map(c=>`<option value="${c}"${det===c?' selected':''}>${c}</option>`).join('');
+    g.innerHTML+=`<div class="mo-item"><span class="mo-num">${i}.</span><select class="mo-sel" id="mo${i}"><option value="">–</option>${opts}</select></div>`;
+  }
+}
+
+function applyManual(){
+  const ov={};
+  for(let i=1;i<=40;i++) ov[i] = document.getElementById(`mo${i}`)?.value||null;
+  detectedAnswers=ov;
+  showResults({answers:ov, bubbleCount:200});
+  redrawDebugWithScoring(ov);
+  document.getElementById('moDetails').open=false;
+}
+
+function clearManual(){
+  for(let i=1;i<=40;i++){
+    const el=document.getElementById(`mo${i}`);
+    if(el) el.value='';
+  }
+}
+
+// ═══════════════════════════════════════
+//  EXPORT CSV
+// ═══════════════════════════════════════
+function exportCSV(){
+  let csv='Item,Detected,Correct Key,Result\n';
+  for(let i=1;i<=40;i++){
+    const det=detectedAnswers[i]||'–';
+    const key=AK[i];
+    const res = !detectedAnswers[i]?'Blank':(det===key?'Correct':'Wrong');
+    csv+=`${i},${det},${key},${res}\n`;
+  }
+  const corr=Object.keys(detectedAnswers).filter(i=>detectedAnswers[i]===AK[i]).length;
+  csv+=`\nScore,${corr}/40,${(corr/40*100).toFixed(1)}%\n`;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='omr_results.csv';
+  a.click();
+}
+
+// ═══════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════
+function resetAll(){
+  detectedAnswers={}; lastBubbles=[]; lastWarpedDataUrl=null;
+  document.getElementById('sCapture').classList.remove('hidden');
+  document.getElementById('sProcess').classList.add('hidden');
+  document.getElementById('sResults').classList.add('hidden');
+  document.getElementById('debugSection').classList.add('hidden');
+  document.getElementById('fileInput').value='';
+  const ap=document.getElementById('alertProcess');
+  ap.className='alert alert-info';
+  ap.innerHTML='<span class="alert-icon">✅</span><span>Image loaded! Click <strong>Process OMR</strong> to automatically detect answers.</span>';
+  ap.style.display='flex';
+  stopCamera();
+  setStep(1);
+}
+
+// ═══════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════
+function setStep(s){
+  for(let i=1;i<=3;i++){
+    const el=document.getElementById(`step${i}`);
+    el.className = i<s?'step done':i===s?'step active':'step';
+  }
+}
+function toggle(id, hidden){ document.getElementById(id).classList.toggle('hidden', hidden); }
+function showAlert(id, type, msg){
+  const el=document.getElementById(id);
+  const icons={info:'ℹ️',warn:'⚠️',success:'✅',error:'❌'};
+  el.className=`alert alert-${type}`;
+  el.innerHTML=`<span class="alert-icon">${icons[type]}</span><span>${msg}</span>`;
+}
+function setLoadMsg(m){ document.getElementById('loadMsg').textContent=m; }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+</script>
+</body>
+</html>
